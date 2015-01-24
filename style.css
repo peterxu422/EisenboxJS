@@ -1,0 +1,107 @@
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing-box; }
+
+body, html {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	color: #545454;
+	background: #F7F7F7;
+}
+
+#page-wrapper {
+	width: 400px;
+	margin: 2.5em auto;
+	background: #FFF;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+	border-radius: 3px;
+}
+
+#new-todo-form {
+	padding: 0.5em;
+	background: #03A9F4;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+#new-todo {
+	width: 100%;
+	padding: 0.5em;
+	font-size: 1em;
+	border-radius: 3px;
+	border: 0;
+}
+
+.quad-new-todo {
+	width: 100%;
+	padding: 0.5em;
+}
+
+.todo-items-list {
+	height: 20em;
+	list-style: none;
+	padding: 0.5em 1em;
+	margin: 0;
+	overflow: scroll;
+	overflow-x: hidden;
+}
+
+#todo-items {
+	height: 48em;
+}
+
+.todo-items-list li {
+	font-size: 0.9em;
+	padding: 0.5em;
+	background: #FFF;
+	border-bottom: 1px solid #EEE;
+	margin: 0.5em 0;	
+}
+
+input[type="checkbox"] {
+	margin-right: 10px;
+}
+
+.side-hdr {
+	-webkit-transform: rotate(-90deg);	/* Safari */
+	-moz-transform: rotate(-90deg); 	/* Firefox */	
+	-ms-transform: rotate(-90deg);		/* IE */
+	-o-transform: rotate(-90deg);		/* Opera */	
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);	/* Internet Explorer */
+}
+
+.sub-hdr {
+	text-align: center;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #03A9F4;
+	padding: 0.5rem 0.0rem;
+}
+
+.top-hdr {
+	text-align: center;
+	padding: 1.0rem 0.0rem;	
+}
+
+#container td, th {
+	border-spacing: 1rem;
+}
+
+#todo-quad {
+	vertical-align: bottom;
+}
+
+#ebox {
+	border-spacing: 0.5rem;
+	border-collapse: collapse;
+}
+
+.quadrant {
+	border: 1px solid #999;
+	/*padding: 0.5rem;*/
+	width: 400px;
+	height: 400px;
+	vertical-align: top;
+}
