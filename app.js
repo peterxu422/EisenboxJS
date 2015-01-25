@@ -154,8 +154,7 @@ window.onload = function() {
 		// Don't send the form. QUES: Why??
 		return false;
 	}
-
-
+/*
 	$(".edit-btn").click(function() {
 		console.log("edit-btn clicked!");
 		debugger
@@ -175,7 +174,35 @@ window.onload = function() {
 		console.log("todo-li clicked!");
 		debugger
 	});
+*/
 };
+
+var editTask = function() {
+	var listItem = this.parentNode;
+	var spanItem = listItem.querySelector("span");
+	var editInput = listItem.querySelector("input[type=text]");
+
+	if(spanItem.style.textDecoration === "line-through") {
+		return;
+	}
+
+	spanItem.style.display = "none";
+	editInput.style.display = "";
+
+	editInput.addEventListener("focusout", function() {
+		var listItem = this.parentNode;
+		var spanItem = listItem.querySelector("span");
+		var checkbox = listItem.querySelector("input[type=checkbox]");
+
+		spanItem.innerHTML = this.value;
+		spanItem.style.display = "inline";
+		this.style.display = "none";
+
+		var id = parseInt(checkbox.getAttribute("data-id"));
+
+		todoDB.updateText(id, this.value, refreshTodos);
+	});
+}
 
 function init() {
 	$("#todo-items").sortable();
@@ -235,6 +262,7 @@ function refreshTodos() {
 			span.innerHTML = todo.text;
 			span.className = "todo-display";
 			span.style.display = "inline";
+			span.onclick = editTask;
 
 			if(done_ts > 0) {
 				span.style.textDecoration = "line-through";
@@ -246,14 +274,9 @@ function refreshTodos() {
 			editInput.style.display = "none";
 			editInput.value = todo.text;
 
-			var btn = document.createElement('button');
-			btn.innerHTML = "Edit";
-			btn.className = "edit-btn";
-
 			li.appendChild(checkbox);
 			li.appendChild(span);
 			li.appendChild(editInput);
-			li.appendChild(btn);
 
 			switch(todo.quadrant) {
 				case 0: 	todoList.appendChild(li);
