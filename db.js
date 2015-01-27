@@ -157,6 +157,33 @@ var todoDB = (function() {
 		}
 	};
 
+	tDB.uncompleteTodo = function(id, callback) {
+		var db = datastore;
+		var transaction = db.transaction(['todo'], 'readwrite');
+		var objStore = transaction.objectStore('todo');
+
+		var getRequest = objStore.get(id);
+
+		getRequest.onsuccess = function(e) {
+			var todo = e.target.result;
+			todo.done_timestamp = 0;
+
+			var reqUpdate = objStore.put(todo);
+
+			reqUpdate.onsuccess = function(e) {
+				callback();
+			}
+
+			reqUpdate.onerror = function(e) {
+				console.log(e);
+			}
+		}
+
+		getRequest.onerror = function(e) {
+			console.log(e);
+		}
+	};
+
 	tDB.completeTodo = function(id, callback) {
 		var db = datastore;
 		var transaction = db.transaction(['todo'], 'readwrite');

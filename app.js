@@ -178,6 +178,7 @@ window.onload = function() {
 };
 
 var editTask = function() {
+	console.log("inside editTask");
 	var listItem = this.parentNode;
 	var labelItem = listItem.querySelector("label");
 	var editInput = listItem.querySelector("input[type=text]");
@@ -190,6 +191,8 @@ var editTask = function() {
 	editInput.style.display = "";
 
 	editInput.addEventListener("focusout", function() {
+		console.log("editinput focusout callback");
+
 		var listItem = this.parentNode;
 		var labelItem = listItem.querySelector("label");
 		var checkbox = listItem.querySelector("input[type=checkbox]");
@@ -264,17 +267,18 @@ function refreshTodos() {
 			checkbox.type = "checkbox";
 			checkbox.className = "todo-checkbox";
 			checkbox.setAttribute("data-id", ts);
+			if(done_ts > 0)
+				checkbox.checked = true;
 
 			var label = document.createElement('label');
 			label.htmlFor = checkbox_id;
 			label.innerHTML = todo.text;
 			label.className = "todo-display";
 			label.style.display = "inline";
-			label.onclick = editTask;
+			label.ondblclick = editTask;
 
-			if(done_ts > 0) {
+			if(done_ts > 0)
 				label.style.textDecoration = "line-through";
-			}
 
 			var editInput = document.createElement('input');
 			editInput.type = "text";
@@ -303,7 +307,23 @@ function refreshTodos() {
 			// Setup an event listener for each checkbox.
 			checkbox.addEventListener('click', function(e) {
 				var id = parseInt(e.target.getAttribute('data-id'));
-				todoDB.completeTodo(id, refreshTodos);
+				var parItem = this.parentNode;
+				var labelItem = parItem.querySelector("label");
+
+				if(labelItem.style.textDecoration === "line-through") {
+					labelItem.style.textDecoration = "";
+					todoDB.uncompleteTodo(id, function() {
+						console.log("callback uncheck todo");
+					});
+				}
+				else {
+					labelItem.style.textDecoration = "line-through";
+					todoDB.completeTodo(id, function(){
+						console.log("callback check todo");
+					});
+				}
+				
+				
 			});
 		}
 
