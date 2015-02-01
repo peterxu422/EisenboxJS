@@ -36,61 +36,78 @@
 	  	<a href="#" data-activates="slide-out" class="button-collapse"></a>
 
 	  	<!-- Content -->
-		<table id="container">
-			<tr>
-				<td>
-					<table id="ebox">
-					  	<tr>
-					  		<th></th>
-						    <th class="top-hdr">Urgent</th>
-						    <th class="top-hdr">Not Urgent</th>
-  						</tr>
-						<tr>
-							<th class="side-hdr">Important</th>
-							<td id="Q1" class="quadrant">
-								<div class="card-panel light-blue sub-hdr">Do it Now</div>
-								<div id="page-wrapper-q1">
-									<form id="new-todo-form-q1" method="POST" action="#">
-										<input type="text" name="new-todo-q1" class="quad-new-todo" id="new-todo-q1" placeholder="Enter a todo item..." required>
-									</form>
-									<ul id="todo-q1-items" class="todo-items-list"></ul>
-								</div>
-							</td>
-							<td id="Q2" class="quadrant">
-								<div class="card-panel light-blue sub-hdr">Schedule time to do</div>
-								<div id="page-wrapper-q2">
-									<form id="new-todo-form-q2" method="POST" action="#">
-										<input type="text" name="new-todo-q2" class="quad-new-todo" id="new-todo-q2" placeholder="Enter a todo item..." required>
-									</form>
-									<ul id="todo-q2-items" class="todo-items-list"></ul>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<th class="side-hdr">Not Important</th>
-							<td id="Q3" class="quadrant">
-								<div class="card-panel light-blue sub-hdr">Delegate</div>
-								<div id="page-wrapper-q3">
-									<form id="new-todo-form-q3" method="POST" action="#">
-										<input type="text" name="new-todo-q3" class="quad-new-todo" id="new-todo-q3" placeholder="Enter a todo item..." required>
-									</form>
-									<ul id="todo-q3-items" class="todo-items-list"></ul>
-								</div>
-							</td>
-							<td id="Q4" class="quadrant">
-								<div class="card-panel light-blue sub-hdr">Eliminate</div>
-								<div id="page-wrapper-q4">
-									<form id="new-todo-form-q4" method="POST" action="#">
-										<input type="text" name="new-todo-q4" class="quad-new-todo" id="new-todo-q4" placeholder="Enter a todo item..." required>
-									</form>
-									<ul id="todo-q4-items" class="todo-items-list"></ul>
-								</div>
-							</td>
-						</tr>
-					</table>
-				</td>
+		<div id="container">
+			<table id="ebox">
+				<tr>
+					<td class="side-container">
+						<div class="side-hdr">Important</div>
+					</td>
+					<td id="Q1" class="td-quad">
+
+						<div class="z-depth-1 quadrant">	
+							<div class="top-hdr">Urgent</div>
+							<div class="sub-hdr">Do it Now</div>
+
+							<div id="page-wrapper-q1">
+								<form id="new-todo-form-q1" method="POST" action="#">
+									<input type="text" name="new-todo-q1" class="quad-new-todo" id="new-todo-q1" placeholder="Enter a todo item..." required>
+								</form>
+								<ul id="todo-q1-items" class="todo-items-list"></ul>
+							</div>
+						</div>
+					</td>
+					<td id="Q2" class="td-quad">
+
+						<div class="z-depth-1 quadrant">
+							<div class="top-hdr">Not Urgent</div>
+							<div class="sub-hdr">Schedule Time</div>
+
+							<div id="page-wrapper-q2">
+								<form id="new-todo-form-q2" method="POST" action="#">
+									<input type="text" name="new-todo-q2" class="quad-new-todo" id="new-todo-q2" placeholder="Enter a todo item..." required>
+								</form>
+								<ul id="todo-q2-items" class="todo-items-list"></ul>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="side-container">
+						<div class="side-hdr">Not Important</div>
+					</td>
+					<td id="Q3" class="td-quad">
+						<div class="z-depth-1 quadrant">
+							<div class="sub-hdr">Delegate</div>
+
+							<div id="page-wrapper-q3">
+								<form id="new-todo-form-q3" method="POST" action="#">
+									<input type="text" name="new-todo-q3" class="quad-new-todo" id="new-todo-q3" placeholder="Enter a todo item..." required>
+								</form>
+								<ul id="todo-q3-items" class="todo-items-list"></ul>
+							</div>
+						</div>
+					</td>
+					<td id="Q4" class="td-quad">
+						<div class="z-depth-1 quadrant">
+							<div class="sub-hdr">Eliminate</div>
+
+							<div id="page-wrapper-q4">
+								<form id="new-todo-form-q4" method="POST" action="#">
+									<input type="text" name="new-todo-q4" class="quad-new-todo" id="new-todo-q4" placeholder="Enter a todo item..." required>
+								</form>
+								<ul id="todo-q4-items" class="todo-items-list"></ul>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+
+
 
 				<!-- Todo List Queue -->
+				<!-- 
 				<td id="todo-quad">
 					<div id="page-wrapper">
 						<form id="new-todo-form" method="POST" action="#">
@@ -100,10 +117,9 @@
 						</ul>
 					</div>
 				</td>
-			</tr>
-		</table>
+				 -->
 
-
+<!-- 
 		<ul id="test-list">
 			<li><span><del>Need to do 1</del><span></li>
 			<li><span style="text-decoration:line-through">Need to do 2</span></li>
@@ -164,5 +180,7 @@
   				lbl.style.textDecoration = "line-through";
   		});
   	</script>
+
+  --> 	
 	</body>
 </html>

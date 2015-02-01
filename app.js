@@ -55,6 +55,7 @@ window.onload = function() {
 	});*/
 
 	// Handle new todo item form submissions.
+	/*
 	newTodoForm.onsubmit = function() {
 		// Get the todo text.
 		var text = newTodoInput.value;
@@ -74,7 +75,7 @@ window.onload = function() {
 		// Don't send the form. QUES: Why??
 		return false;
 	}
-
+*/
 	newTodoFormQ1.onsubmit = function() {
 		// Get the todo text.
 		var text = newTodoInputQ1.value;
@@ -233,7 +234,7 @@ function refreshTodos() {
 		var todoListQ3 = document.getElementById("todo-q3-items");
 		var todoListQ4 = document.getElementById("todo-q4-items");
 
-		todoList.innerHTML = '';
+		//todoList.innerHTML = '';
 		todoListQ1.innerHTML = '';
 		todoListQ2.innerHTML = '';
 		todoListQ3.innerHTML = '';
@@ -292,8 +293,10 @@ function refreshTodos() {
 			par.appendChild(editInput);
 
 			switch(todo.quadrant) {
+				/*
 				case 0: 	todoList.appendChild(li);
 							break;
+				*/			
 				case 1: 	todoListQ1.appendChild(li);
 							break;
 				case 2: 	todoListQ2.appendChild(li);
