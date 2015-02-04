@@ -20,7 +20,7 @@ window.onload = function() {
 
 	var newTodoFormQ4 = document.getElementById('new-todo-form-q4');
 	var newTodoInputQ4 = document.getElementById('new-todo-q4');
-	
+
 	/*init();
 	$("#todo-q1-items").droppable({
 		drop: function(e, ui) {
