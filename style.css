@@ -14,10 +14,34 @@ body, html {
 
 /* Main Styles --------------- */
 
+.project-title-wrapper {
+	/*margin-left: 100px;*/
+	padding-left: 170px;
+}
+
+.button-container {
+	width: 30%;
+	padding: auto;
+	margin: 10px auto;
+}
+
+#proj-add-btn {
+	padding-left: 0;
+}
+
+.project {
+	font-weight: bold;
+}
+
+.project-title {
+	font-size: 2em;
+}
+
 #container {
 	width: 85%;
 	height: 94%;
-	margin: auto;
+	/*margin-left: 100px;*/
+	/*margin: auto;*/
 	padding: 10px 100px;
 }
 

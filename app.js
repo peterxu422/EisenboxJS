@@ -3,7 +3,7 @@ window.onload = function() {
 
 	// Have access to todoDB b/c db.js file is loaded before app.js
 	// Display the todo items
-	todoDB.open(refreshTodos);
+	todoDB.open(refreshTodos, refreshProjects, "todo");
 
 	// Get references to the form elements
 	var newTodoForm = document.getElementById('new-todo-form');
@@ -21,7 +21,8 @@ window.onload = function() {
 	var newTodoFormQ4 = document.getElementById('new-todo-form-q4');
 	var newTodoInputQ4 = document.getElementById('new-todo-q4');
 
-	/*init();
+	init();
+	/*
 	$("#todo-q1-items").droppable({
 		drop: function(e, ui) {
 			var item = ui.draggable[0];
@@ -209,17 +210,70 @@ var editTask = function() {
 }
 
 function init() {
+	/*
 	$("#todo-items").sortable();
 	$("#todo-q1-items").sortable();
 	$("#todo-q2-items").sortable();
 	$("#todo-q3-items").sortable();
 	$("#todo-q4-items").sortable();
 	$("#test-list").sortable();
+	*/
+
+	var projTitle = document.getElementById("project-title");
+	projTitle.innerHTML = todoDB.getCurrentProject();
+
+	// Bind handler to clicking on project
+	var projectLinks = document.getElementsByClassName("project");
+	console.log("HELLO???");
+	// TODO: WHY DOES DEBUGGER NEED TO BE ON IN ORDER FOR THIS TO WORK?
+	//debugger
+	for(var i=0; i < projectLinks.length; i++) {
+		projectLinks[i].onclick = function(e) {
+			var projName = e.target.innerHTML;
+			var projTitle = document.getElementById("project-title");
+			projTitle.innerHTML = projName;
+			todoDB.open(refreshTodos, function() {console.log("hey");}, projName);
+			console.log("Clicked on Project: " + projName);
+			debugger
+		}
+	}
+
+	var projAddBtn = document.getElementById("proj-add-btn");
+	projAddBtn.onclick = function() {
+		var newProjName = prompt("Enter a project Name");
+
+		if(newProjName === null)
+			return;
+		todoDB.createProject(newProjName, refreshProjects);
+	}
 }
 
 function printDB() {
 	todoDB.fetchTodos(function(todos) {
 		console.log(todos.toString());
+	});
+}
+
+function refreshProjects() {
+	todoDB.fetchProjects(function(projects) {
+		var sideNav = document.getElementById("slide-out");
+		
+		// Remove all current list items from the sideNav
+		var listProjs = document.querySelectorAll("#slide-out li");
+		for(var i=0; li=listProjs[i]; i++) {
+			li.parentNode.removeChild(li);
+		}
+
+		// Add Projects/Object Stores from the database
+		for(var i=0; i < projects.length; i++) {
+			var li = document.createElement("li");
+			var a = document.createElement("a");
+			a.className = "project";
+			a.setAttribute("href", "#!");
+			a.innerHTML = projects[i];
+			li.appendChild(a);
+			sideNav.appendChild(li);
+		}
 	});
 }
 
@@ -324,12 +378,9 @@ function refreshTodos() {
 					todoDB.completeTodo(id, function(){
 						console.log("callback check todo");
 					});
-				}
-				
-				
+				}		
 			});
 		}
-
 	});
 }
 

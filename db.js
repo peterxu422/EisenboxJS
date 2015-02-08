@@ -3,15 +3,20 @@
 var todoDB = (function() {
 	var tDB = {}; // Stores the methods in the module that will be accessible from outside the scope of module
 	var datastore = null; // Stores reference to the database. Cannot be referenced outside of module
+	var curProject = "";
 
 	// TODO: Add methods for interacting with the database here.
-		
+	
+	tDB.getCurrentProject = function() {
+		return curProject;
+	};
+
 	/*
 	 Open a connection to the datastore
 	 */
-	tDB.open = function(callback) {
+	tDB.open = function(callback, callback2, projectName) {
 		// Database version
-		var version = 1;
+		//var version = 1;
 
 		// Open a connection to the datastore. 
 		/* 
@@ -21,7 +26,8 @@ var todoDB = (function() {
 
 			The version determines the database schema.
 		*/
-		var request = indexedDB.open('todos', version);
+		var request = indexedDB.open('todos');
+		curProject = projectName;
 
 		// Handle datastore upgrades.
 		/*
@@ -38,13 +44,13 @@ var todoDB = (function() {
 
 			// Check to see if the object store exists. Delete the old datastore.
 			
-			if(db.objectStoreNames.contains("todo")) {
-				db.deleteObjectStore("todo");
+			if(db.objectStoreNames.contains(curProject)) {
+				db.deleteObjectStore(curProject);
 			}
 
 			// Create a new datastore.
 			// Specifying a keyPath is kind of like specifying a field
-			var store = db.createObjectStore("todo", {
+			var store = db.createObjectStore(curProject, {
 				keyPath: 'timestamp'
 			});
 		};
@@ -56,11 +62,90 @@ var todoDB = (function() {
 
 			// Execute the callback. In this case, refreshTodos()
 			callback();
+			callback2();
 		};
 
 		// Handle errors when opening the datastore.
 		// Opening IndexDB in incognito mode will fail
 		request.onerror = tDB.onerror;
+	};
+
+	/*
+		Create a new object store for a new Project
+		************TODO: RefreshProjects Callback isn't working properly
+	*/
+	tDB.createProject = function(projectName, callback) {
+		var db = datastore;
+		if(db.objectStoreNames.contains(projectName)) {
+			alert(projectName + " already exists!");
+		} else {
+			var request = indexedDB.open('todos');
+
+			request.onsuccess = function(e) {
+				datastore.close();
+				var database = e.target.result;
+				var version = parseInt(database.version);
+				database.close();
+				var secondRequest = indexedDB.open('todos', version + 1);
+
+				secondRequest.onupgradeneeded = function(e) {
+					var database = e.target.result;
+					var objStore = database.createObjectStore(projectName, {
+						keyPath: 'timestamp'
+					});
+
+					console.log("A new objStore was created");
+				};
+
+				secondRequest.onsuccess = function(e) {
+					console.log("secondRequest onsuccess");
+					e.target.result.close();
+					tDB.fetchProjects(callback);
+					debugger
+				}
+			}
+		}
+	};
+
+	tDB.deleteProject = function(projectName, callback) {
+		var db = datastore;
+		if(db.objectStoreNames.contains(projectName)) {
+			var request = indexedDB.open('todos');
+
+			request.onsuccess = function(e) {
+				datastore.close();
+				var database = e.target.result;
+				var version = parseInt(database.version);
+				database.close();
+				var secondRequest = indexedDB.open('todos', version + 1);
+
+				secondRequest.onupgradeneeded = function(e) {
+					var database = e.target.result;
+					var objStore = database.deleteObjectStore(projectName);
+					console.log("objStore " + projectName + " was deleted");
+				};
+
+				secondRequest.onsuccess = function(e) {
+					e.target.result.close();
+					tDB.fetchProjects(callback);
+					debugger
+				}
+			}
+		} else {
+			alert(projectName + " is not an existing project.");
+		}
+	};
+
+	/*
+		Fetch all of the projects/object stores in the database
+	*/
+	tDB.fetchProjects = function(callback) {
+		var db = datastore;
+		var projects = [];
+		//console.log("datastore: ", datastore);
+		projects = datastore.objectStoreNames;
+		// debugger
+		callback(projects);
 	};
 
 	/*
@@ -72,8 +157,8 @@ var todoDB = (function() {
 			Transactions come from the db object and you need to specify which object stores you want the trxn to span
 		*/
 		var db = datastore;
-		var transaction = db.transaction(['todo'], 'readwrite'); // This transaction handles the interaction with the database. Returns a transaction object
-		var objStore = transaction.objectStore('todo'); // Reference to the todo object store
+		var transaction = db.transaction([curProject], 'readwrite'); // This transaction handles the interaction with the database. Returns a transaction object
+		var objStore = transaction.objectStore(curProject); // Reference to the todo object store
 
 		var keyRange = IDBKeyRange.lowerBound(0); // Specify range of items in object store to retrieve. Get all items so set lower bound of range to 0 (selects all from 0 and up)
 		var cursorRequest = objStore.openCursor(keyRange); // Cursor to cycle thru each todo item in database
@@ -107,10 +192,10 @@ var todoDB = (function() {
 		var db = datastore;
 
 		// Initiate a new transaction
-		var transaction = db.transaction(['todo'], 'readwrite');
+		var transaction = db.transaction([curProject], 'readwrite');
 
 		// Get the datastore
-		var objStore = transaction.objectStore('todo');
+		var objStore = transaction.objectStore(curProject);
 
 		// Create a timestamp to be the key for the todo item.
 		var timestamp = new Date().getTime();
@@ -141,12 +226,11 @@ var todoDB = (function() {
 	*/
 	tDB.deleteTodo = function(id, callback) {
 		var db = datastore;
-		var transaction = db.transaction(['todo'], 'readwrite');
-		var objStore = transaction.objectStore('todo');
+		var transaction = db.transaction([curProject], 'readwrite');
+		var objStore = transaction.objectStore(curProject);
 
 		var request = objStore.delete(id);
-		console.log("here");
-		//debugger
+		
 		request.onsuccess = function(e) {
 
 			callback();
@@ -159,8 +243,8 @@ var todoDB = (function() {
 
 	tDB.uncompleteTodo = function(id, callback) {
 		var db = datastore;
-		var transaction = db.transaction(['todo'], 'readwrite');
-		var objStore = transaction.objectStore('todo');
+		var transaction = db.transaction([curProject], 'readwrite');
+		var objStore = transaction.objectStore(curProject);
 
 		var getRequest = objStore.get(id);
 
@@ -186,8 +270,8 @@ var todoDB = (function() {
 
 	tDB.completeTodo = function(id, callback) {
 		var db = datastore;
-		var transaction = db.transaction(['todo'], 'readwrite');
-		var objStore = transaction.objectStore('todo');
+		var transaction = db.transaction([curProject], 'readwrite');
+		var objStore = transaction.objectStore(curProject);
 
 		var getRequest = objStore.get(id);
 
@@ -214,8 +298,8 @@ var todoDB = (function() {
 
 	tDB.updateTodo = function(todo, callback) {
 		var db = datastore;
-		var transaction = db.transaction(['todo'], 'readwrite');
-		var objStore = transaction.objectStore('todo');
+		var transaction = db.transaction([curProject], 'readwrite');
+		var objStore = transaction.objectStore(curProject);
 
 		var request = objStore.put(todo);
 
@@ -231,8 +315,8 @@ var todoDB = (function() {
 
 	tDB.updateText = function(id, text, callback) {
 		var db = datastore;
-		var transaction = db.transaction(['todo'], 'readwrite');
-		var objStore = transaction.objectStore('todo');
+		var transaction = db.transaction([curProject], 'readwrite');
+		var objStore = transaction.objectStore(curProject);
 
 		var getRequest = objStore.get(id);
 
@@ -258,8 +342,8 @@ var todoDB = (function() {
 
 	tDB.changeQuad = function(id, quad, callback) {
 		var db = datastore;
-		var transaction = db.transaction(['todo'], 'readwrite');
-		var objStore = transaction.objectStore('todo');
+		var transaction = db.transaction([curProject], 'readwrite');
+		var objStore = transaction.objectStore(curProject);
 		
 		var getRequest = objStore.get(id);
 
