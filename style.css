@@ -31,6 +31,23 @@ body, html {
 
 .project {
 	font-weight: bold;
+	display: inline-block;
+	width: 90%;
+	float: left;
+	border: 1px solid red;
+}
+
+.del-btn-container {
+	width: 10%;
+	display: inline-block;
+	float: right;
+	border: 1px solid red;
+}
+
+.del-proj {
+	font-size: 20px;
+	vertical-align: center;
+	float: right;
 }
 
 .project-title {

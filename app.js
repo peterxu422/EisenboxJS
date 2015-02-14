@@ -222,21 +222,18 @@ function init() {
 	var projTitle = document.getElementById("project-title");
 	projTitle.innerHTML = todoDB.getCurrentProject();
 
-	// Bind handler to clicking on project
-	var projectLinks = document.getElementsByClassName("project");
-	console.log("HELLO???");
-	// TODO: WHY DOES DEBUGGER NEED TO BE ON IN ORDER FOR THIS TO WORK?
-	//debugger
+	// Q: Why does this execute earlier than refreshProjects callback in the todoDB.open in the beginning?
+	/*
 	for(var i=0; i < projectLinks.length; i++) {
-		projectLinks[i].onclick = function(e) {
+		projectLinks[i].addEventListener('click', function(e) {
 			var projName = e.target.innerHTML;
 			var projTitle = document.getElementById("project-title");
 			projTitle.innerHTML = projName;
 			todoDB.open(refreshTodos, function() {console.log("hey");}, projName);
 			console.log("Clicked on Project: " + projName);
-			debugger
-		}
+		});
 	}
+	*/
 
 	var projAddBtn = document.getElementById("proj-add-btn");
 	projAddBtn.onclick = function() {
@@ -246,6 +243,18 @@ function init() {
 			return;
 		todoDB.createProject(newProjName, refreshProjects);
 	}
+/*
+	var projDelBtnList = document.getElementsByClassName("del-proj-btn");
+	for(var i=0; i < projDelBtnList.length; i++) {
+		var projDelBtn = projDelBtnList[i];
+
+		projDelBtn.onclick = function() {
+			var projName = projDelBtn.parentNode.parentNode.querySelector(".project").innerHTML;
+			todoDB.deleteProject(projName, refreshProjects);
+			//console.log("del-proj-btn clicked: " + projName);
+		}
+	}
+*/
 }
 
 function printDB() {
@@ -271,7 +280,35 @@ function refreshProjects() {
 			a.className = "project";
 			a.setAttribute("href", "#!");
 			a.innerHTML = projects[i];
+
+			var div = document.createElement("div");
+			div.className = "del-btn-container";
+
+			var a2 = document.createElement("a")
+			a2.className = "waves-effect btn-small del-proj-btn";
+
+			var iTag = document.createElement("i");
+			iTag.className = "mdi-action-delete right del-proj";
+			div.appendChild(a2);
+			a2.appendChild(iTag);
+
+			// Bind handler to clicking on project
+			a.addEventListener('click', function(e) {
+				var projName = e.target.innerHTML;
+				var projTitle = document.getElementById("project-title");
+				projTitle.innerHTML = projName;
+				todoDB.open(refreshTodos, function() {}, projName);
+			});
+
+			a2.addEventListener('click', function(e) {
+				var projDelBtn = e.target;
+				var projName = projDelBtn.parentNode.parentNode.parentNode.querySelector(".project").innerHTML;
+				todoDB.deleteProject(projName, refreshProjects);
+				console.log("del-proj-btn clicked: " + projName);
+			})
+
 			li.appendChild(a);
+			li.appendChild(div);
 			sideNav.appendChild(li);
 		}
 	});

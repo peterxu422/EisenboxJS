@@ -128,7 +128,6 @@ var todoDB = (function() {
 				secondRequest.onsuccess = function(e) {
 					e.target.result.close();
 					tDB.fetchProjects(callback);
-					debugger
 				}
 			}
 		} else {
