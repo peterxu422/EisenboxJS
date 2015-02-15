@@ -99,11 +99,62 @@ var todoDB = (function() {
 
 				secondRequest.onsuccess = function(e) {
 					console.log("secondRequest onsuccess");
-					e.target.result.close();
+					// QUES: Does it need to be closed??
+					//e.target.result.close();
+					datastore = e.target.result;
 					tDB.fetchProjects(callback);
-					debugger
 				}
 			}
+		}
+	};
+
+	tDB.updateProjectName = function(projName, newProjName, callback) {
+		var db = datastore;
+		if(db.objectStoreNames.contains(projName)) {
+			var transaction = db.transaction([projName], 'readwrite');
+			var oldObjStore = transaction.objectStore(projName);
+
+			var request = indexedDB.open('todos');
+
+			request.onsuccess = function(e) {
+
+				datastore.close();
+				var database = e.target.result;
+				var version = parseInt(database.version);
+				database.close();
+				var secondRequest = indexedDB.open('todos', version + 1);
+				debugger
+				secondRequest.onupgradeneeded = function(e) {
+					var database = e.target.result;
+					var newObjStore = database.createObjectStore(newProjName, {
+						keyPath: 'timestamp'
+					});
+				}
+
+				secondRequest.onsuccess = function(e) {
+					console.log("secondRequest onsuccess");
+					datastore = e.target.result;
+					//e.target.result.close();
+
+					tDB.fetchTodosFromProject(projName, function(todos) {
+						var db = datastore;
+						var newTransaction = db.transaction([newProjName], 'readwrite');
+						var newObjStore = newTransaction.objectStore(newProjName);
+						for(var i=0; i < todos.length; i++) {
+							newObjStore.put(todos[i]);
+						}
+						debugger
+						tDB.deleteProject(projName, function() {});
+					});
+					tDB.fetchProjects(callback);
+				}
+
+				secondRequest.onerror = function(e) {
+					console.log(e);
+				}
+			}
+		} else {
+			alert(projectName + " is not an existing project.");
 		}
 	};
 
@@ -126,7 +177,7 @@ var todoDB = (function() {
 				};
 
 				secondRequest.onsuccess = function(e) {
-					e.target.result.close();
+					datastore = e.target.result;
 					tDB.fetchProjects(callback);
 				}
 			}
@@ -158,6 +209,35 @@ var todoDB = (function() {
 		var db = datastore;
 		var transaction = db.transaction([curProject], 'readwrite'); // This transaction handles the interaction with the database. Returns a transaction object
 		var objStore = transaction.objectStore(curProject); // Reference to the todo object store
+
+		var keyRange = IDBKeyRange.lowerBound(0); // Specify range of items in object store to retrieve. Get all items so set lower bound of range to 0 (selects all from 0 and up)
+		var cursorRequest = objStore.openCursor(keyRange); // Cursor to cycle thru each todo item in database
+
+		var todos = [];
+
+		transaction.oncomplete = function(e) {
+			// Execute the callback function once all items fetched
+			callback(todos);
+		};
+		
+		cursorRequest.onsuccess = function(e) {
+			// The cursor object has the key and value properties
+			var result = e.target.result;
+			if(!!result == false) {
+				return;
+			}
+
+			todos.push(result.value);
+			result.continue(); // Moves cursor to next item in the database
+		};
+
+		cursorRequest.onerror = tDB.onerror;
+	};
+
+	tDB.fetchTodosFromProject = function(projName, callback) {
+		var db = datastore;
+		var transaction = db.transaction([projName], 'readwrite'); // This transaction handles the interaction with the database. Returns a transaction object
+		var objStore = transaction.objectStore(projName); // Reference to the todo object store
 
 		var keyRange = IDBKeyRange.lowerBound(0); // Specify range of items in object store to retrieve. Get all items so set lower bound of range to 0 (selects all from 0 and up)
 		var cursorRequest = objStore.openCursor(keyRange); // Cursor to cycle thru each todo item in database

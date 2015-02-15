@@ -19,6 +19,7 @@ body, html {
 	padding-left: 170px;
 }
 
+/* SideBar -------------------- */
 .button-container {
 	width: 30%;
 	padding: auto;
@@ -31,28 +32,54 @@ body, html {
 
 .project {
 	font-weight: bold;
-	display: inline-block;
-	width: 90%;
+	/*display: inline-block;*/
+	width: 100%;
 	float: left;
+	padding: 0 2%;
 	border: 1px solid red;
 }
 
+.proj-side-lbl {
+	width: 100%;
+	font-size: 1em;
+	border:1px solid red;
+}
+
+.proj-edit {
+	margin: 0 0;
+	display: inline;
+	/*float: left;*/
+}
+
+.project:hover {
+	background-color: #EEE;
+}
+/*
 .del-btn-container {
 	width: 10%;
 	display: inline-block;
 	float: right;
 	border: 1px solid red;
 }
+*/
+
+.del-container {
+	
+	border: 1px solid red;
+}
 
 .del-proj {
 	font-size: 20px;
 	vertical-align: center;
-	float: right;
+	/*display: none;*/
+	margin: 0 0;
 }
 
 .project-title {
 	font-size: 2em;
 }
+
+/* Body ----------------------- */
 
 #container {
 	width: 85%;

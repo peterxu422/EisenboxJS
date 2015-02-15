@@ -3,7 +3,7 @@ window.onload = function() {
 
 	// Have access to todoDB b/c db.js file is loaded before app.js
 	// Display the todo items
-	todoDB.open(refreshTodos, refreshProjects, "todo");
+	todoDB.open(refreshTodos, refreshProjects, "Eisenbox");
 
 	// Get references to the form elements
 	var newTodoForm = document.getElementById('new-todo-form');
@@ -209,6 +209,30 @@ var editTask = function() {
 	});
 }
 
+var editProject = function() {
+	console.log("inside editProject");
+	var a = this.parentNode;
+	var lbl = this;
+	var editInput = a.querySelector("input[type=text]");
+
+	lbl.style.display = "none";
+	editInput.style.display = "";
+
+	editInput.addEventListener("focusout", function() {
+		var a = this.parentNode;
+		var lbl = a.querySelector("label");
+		var oldProjName = lbl.value;
+		var newProjName = this.value;
+
+		lbl.innerHTML = newProjName;
+		lbl.style.display = "inline";
+		this.style.display = "none";
+
+		console.log(oldProjName + ", " + newProjName);
+		todoDB.updateProjectName(oldProjName, newProjName, refreshProjects);
+	});
+}
+
 function init() {
 	/*
 	$("#todo-items").sortable();
@@ -243,22 +267,17 @@ function init() {
 			return;
 		todoDB.createProject(newProjName, refreshProjects);
 	}
-/*
-	var projDelBtnList = document.getElementsByClassName("del-proj-btn");
-	for(var i=0; i < projDelBtnList.length; i++) {
-		var projDelBtn = projDelBtnList[i];
 
-		projDelBtn.onclick = function() {
-			var projName = projDelBtn.parentNode.parentNode.querySelector(".project").innerHTML;
-			todoDB.deleteProject(projName, refreshProjects);
-			//console.log("del-proj-btn clicked: " + projName);
-		}
-	}
-*/
+/*	var projLists = document.getElementsByClassName("project");
+	for(var i=0; i < projLists.length; i++) {
+		var lbl = projLists[i].querySelector("label");
+		lbl.ondblclick = editProject;
+	}*/
 }
 
 function printDB() {
 	todoDB.fetchTodos(function(todos) {
+		debugger
 		console.log(todos.toString());
 	});
 }
@@ -275,40 +294,74 @@ function refreshProjects() {
 
 		// Add Projects/Object Stores from the database
 		for(var i=0; i < projects.length; i++) {
+			var projName = projects[i];
 			var li = document.createElement("li");
+
+			var divRow = document.createElement("div");
+			divRow.className = "row";
+
 			var a = document.createElement("a");
 			a.className = "project";
+			a.value = projName;
 			a.setAttribute("href", "#!");
-			a.innerHTML = projects[i];
+			
+			var divCol10 = document.createElement("div");
+			divCol10.className = "col s10";
 
-			var div = document.createElement("div");
-			div.className = "del-btn-container";
+			var label = document.createElement("label");
+			label.className = "proj-side-lbl";
+			label.value = projName;
+			label.innerHTML = projName;
+			label.ondblclick = editProject;
 
-			var a2 = document.createElement("a")
-			a2.className = "waves-effect btn-small del-proj-btn";
+			var editInput = document.createElement("input");
+			editInput.type = "text";
+			editInput.className = "proj-edit";
+			editInput.value = projName;
+			editInput.style.display = "none";
+			divCol10.appendChild(label);
+			divCol10.appendChild(editInput);
 
+			var divCol2 = document.createElement("div");
+			divCol2.className = "col s2 del-container";
 			var iTag = document.createElement("i");
 			iTag.className = "mdi-action-delete right del-proj";
-			div.appendChild(a2);
-			a2.appendChild(iTag);
+			iTag.value = projName;
+			divCol2.appendChild(iTag);
 
 			// Bind handler to clicking on project
 			a.addEventListener('click', function(e) {
-				var projName = e.target.innerHTML;
+				var elt = e.target;
+				var eltTag = elt.tagName;
+				var projName = "";
+
+				if(eltTag === "DIV")
+					projName = elt.querySelector("label").innerHTML;
+				else if(eltTag === "LABEL")
+					projName = elt.innerHTML;
+				else if(eltTag === "I")
+					return;
+
+				if(projName === "")
+					return;
+
+				console.log("a-clicked: " + projName);
 				var projTitle = document.getElementById("project-title");
 				projTitle.innerHTML = projName;
 				todoDB.open(refreshTodos, function() {}, projName);
 			});
 
-			a2.addEventListener('click', function(e) {
+			iTag.addEventListener('click', function(e) {
 				var projDelBtn = e.target;
-				var projName = projDelBtn.parentNode.parentNode.parentNode.querySelector(".project").innerHTML;
+				var projName = projDelBtn.value;
 				todoDB.deleteProject(projName, refreshProjects);
 				console.log("del-proj-btn clicked: " + projName);
 			})
 
-			li.appendChild(a);
-			li.appendChild(div);
+			a.appendChild(divCol10);
+			a.appendChild(divCol2);
+			divRow.appendChild(a);
+			li.appendChild(divRow);
 			sideNav.appendChild(li);
 		}
 	});
