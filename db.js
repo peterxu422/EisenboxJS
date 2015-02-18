@@ -4,11 +4,31 @@ var todoDB = (function() {
 	var tDB = {}; // Stores the methods in the module that will be accessible from outside the scope of module
 	var datastore = null; // Stores reference to the database. Cannot be referenced outside of module
 	var curProject = "";
+	var dbName = "todo-db";
 
 	// TODO: Add methods for interacting with the database here.
 	
 	tDB.getCurrentProject = function() {
 		return curProject;
+	};
+
+	tDB.getDatastore = function() {
+		return datastore;
+	};
+
+	tDB.setCurrentProject = function(project) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
+		var db = datastore;
+		if(db.objectStoreNames.contains(project)) {
+			curProject = project;
+		}
+		else {
+			console.log("Not a valid project: " + project);
+		}
 	};
 
 	/*
@@ -26,7 +46,7 @@ var todoDB = (function() {
 
 			The version determines the database schema.
 		*/
-		var request = indexedDB.open('todos');
+		var request = indexedDB.open(dbName);
 		curProject = projectName;
 
 		// Handle datastore upgrades.
@@ -59,12 +79,12 @@ var todoDB = (function() {
 		request.onsuccess = function(e) {
 			// Get a reference to the DB.
 			datastore = e.target.result;
-
+			
 			// Execute the callback. In this case, refreshTodos()
 			callback();
 			callback2();
 		};
-
+		
 		// Handle errors when opening the datastore.
 		// Opening IndexDB in incognito mode will fail
 		request.onerror = tDB.onerror;
@@ -75,19 +95,24 @@ var todoDB = (function() {
 		************TODO: RefreshProjects Callback isn't working properly
 	*/
 	tDB.createProject = function(projectName, callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		var db = datastore;
 		if(db.objectStoreNames.contains(projectName)) {
 			alert(projectName + " already exists!");
 		} else {
-			var request = indexedDB.open('todos');
+			var request = indexedDB.open(dbName);
 
 			request.onsuccess = function(e) {
 				datastore.close();
 				var database = e.target.result;
 				var version = parseInt(database.version);
 				database.close();
-				var secondRequest = indexedDB.open('todos', version + 1);
-
+				var secondRequest = indexedDB.open(dbName, version + 1);
+				
 				secondRequest.onupgradeneeded = function(e) {
 					var database = e.target.result;
 					var objStore = database.createObjectStore(projectName, {
@@ -99,37 +124,41 @@ var todoDB = (function() {
 
 				secondRequest.onsuccess = function(e) {
 					console.log("secondRequest onsuccess");
-					// QUES: Does it need to be closed??
+					// QUES: Does it need to be closed? No. In fact, it prevents the project list from being refreshed
 					//e.target.result.close();
 					datastore = e.target.result;
-					tDB.fetchProjects(callback);
-				}
-			}
+					callback();
+					//tDB.fetchProjects(callback);
+				};
+			};
 		}
 	};
 
 	tDB.updateProjectName = function(projName, newProjName, callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		var db = datastore;
 		if(db.objectStoreNames.contains(projName)) {
-			var transaction = db.transaction([projName], 'readwrite');
-			var oldObjStore = transaction.objectStore(projName);
-
-			var request = indexedDB.open('todos');
+			var request = indexedDB.open(dbName);
 
 			request.onsuccess = function(e) {
-
 				datastore.close();
 				var database = e.target.result;
 				var version = parseInt(database.version);
 				database.close();
-				var secondRequest = indexedDB.open('todos', version + 1);
-				debugger
+				var secondRequest = indexedDB.open(dbName, version + 1);
+				console.log("updateProjectName: " + projName + ", " + newProjName);
+
 				secondRequest.onupgradeneeded = function(e) {
+					console.log("onupgradeneeded updateProjectName");
 					var database = e.target.result;
 					var newObjStore = database.createObjectStore(newProjName, {
 						keyPath: 'timestamp'
 					});
-				}
+				};
 
 				secondRequest.onsuccess = function(e) {
 					console.log("secondRequest onsuccess");
@@ -143,32 +172,36 @@ var todoDB = (function() {
 						for(var i=0; i < todos.length; i++) {
 							newObjStore.put(todos[i]);
 						}
-						debugger
-						tDB.deleteProject(projName, function() {});
+						
+						tDB.deleteProject(projName, callback);
 					});
-					tDB.fetchProjects(callback);
-				}
+				};
 
 				secondRequest.onerror = function(e) {
 					console.log(e);
-				}
-			}
+				};
+			};
 		} else {
 			alert(projectName + " is not an existing project.");
 		}
 	};
 
 	tDB.deleteProject = function(projectName, callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		var db = datastore;
 		if(db.objectStoreNames.contains(projectName)) {
-			var request = indexedDB.open('todos');
+			var request = indexedDB.open(dbName);
 
 			request.onsuccess = function(e) {
 				datastore.close();
 				var database = e.target.result;
 				var version = parseInt(database.version);
 				database.close();
-				var secondRequest = indexedDB.open('todos', version + 1);
+				var secondRequest = indexedDB.open(dbName, version + 1);
 
 				secondRequest.onupgradeneeded = function(e) {
 					var database = e.target.result;
@@ -178,8 +211,8 @@ var todoDB = (function() {
 
 				secondRequest.onsuccess = function(e) {
 					datastore = e.target.result;
-					tDB.fetchProjects(callback);
-				}
+					callback();
+				};
 			}
 		} else {
 			alert(projectName + " is not an existing project.");
@@ -190,6 +223,11 @@ var todoDB = (function() {
 		Fetch all of the projects/object stores in the database
 	*/
 	tDB.fetchProjects = function(callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		var db = datastore;
 		var projects = [];
 		//console.log("datastore: ", datastore);
@@ -202,6 +240,11 @@ var todoDB = (function() {
 		Fetch all of the todo items in the datastore
 	*/
 	tDB.fetchTodos = function(callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		/*
 			You need to start a transaction to do anything with your db.
 			Transactions come from the db object and you need to specify which object stores you want the trxn to span
@@ -235,6 +278,11 @@ var todoDB = (function() {
 	};
 
 	tDB.fetchTodosFromProject = function(projName, callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		var db = datastore;
 		var transaction = db.transaction([projName], 'readwrite'); // This transaction handles the interaction with the database. Returns a transaction object
 		var objStore = transaction.objectStore(projName); // Reference to the todo object store
@@ -267,6 +315,11 @@ var todoDB = (function() {
 		Create a new todo item
 	*/
 	tDB.createTodo = function(text, quad, callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		// Get a reference to the db
 		var db = datastore;
 
@@ -304,6 +357,11 @@ var todoDB = (function() {
 		Delete a todo item
 	*/
 	tDB.deleteTodo = function(id, callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		var db = datastore;
 		var transaction = db.transaction([curProject], 'readwrite');
 		var objStore = transaction.objectStore(curProject);
@@ -321,6 +379,11 @@ var todoDB = (function() {
 	};
 
 	tDB.uncompleteTodo = function(id, callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		var db = datastore;
 		var transaction = db.transaction([curProject], 'readwrite');
 		var objStore = transaction.objectStore(curProject);
@@ -348,6 +411,11 @@ var todoDB = (function() {
 	};
 
 	tDB.completeTodo = function(id, callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		var db = datastore;
 		var transaction = db.transaction([curProject], 'readwrite');
 		var objStore = transaction.objectStore(curProject);
@@ -376,6 +444,11 @@ var todoDB = (function() {
 	};
 
 	tDB.updateTodo = function(todo, callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		var db = datastore;
 		var transaction = db.transaction([curProject], 'readwrite');
 		var objStore = transaction.objectStore(curProject);
@@ -393,6 +466,11 @@ var todoDB = (function() {
 	};
 
 	tDB.updateText = function(id, text, callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		var db = datastore;
 		var transaction = db.transaction([curProject], 'readwrite');
 		var objStore = transaction.objectStore(curProject);
@@ -420,6 +498,11 @@ var todoDB = (function() {
 	};
 
 	tDB.changeQuad = function(id, quad, callback) {
+		if(datastore === null) {
+			throw "datastore is null exception";
+			return;
+		}
+
 		var db = datastore;
 		var transaction = db.transaction([curProject], 'readwrite');
 		var objStore = transaction.objectStore(curProject);

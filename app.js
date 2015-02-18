@@ -5,6 +5,7 @@ window.onload = function() {
 	// Display the todo items
 	todoDB.open(refreshTodos, refreshProjects, "Eisenbox");
 
+
 	// Get references to the form elements
 	var newTodoForm = document.getElementById('new-todo-form');
 	var newTodoInput = document.getElementById('new-todo');
@@ -266,7 +267,15 @@ function init() {
 		if(newProjName === null)
 			return;
 		todoDB.createProject(newProjName, refreshProjects);
-	}
+	};
+
+	var updateBtn = document.getElementById("update-btn");
+	updateBtn.onclick = function() {
+		var proj1 = prompt("Enter proj1 name");
+		var proj2 = prompt("Enter proj2 name");
+
+		todoDB.updateProjectName(proj1, proj2, refreshProjects);
+	};
 
 /*	var projLists = document.getElementsByClassName("project");
 	for(var i=0; i < projLists.length; i++) {
@@ -277,7 +286,6 @@ function init() {
 
 function printDB() {
 	todoDB.fetchTodos(function(todos) {
-		debugger
 		console.log(todos.toString());
 	});
 }
@@ -348,7 +356,9 @@ function refreshProjects() {
 				console.log("a-clicked: " + projName);
 				var projTitle = document.getElementById("project-title");
 				projTitle.innerHTML = projName;
-				todoDB.open(refreshTodos, function() {}, projName);
+
+				todoDB.setCurrentProject(projName);
+				refreshTodos();
 			});
 
 			iTag.addEventListener('click', function(e) {
