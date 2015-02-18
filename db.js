@@ -141,6 +141,15 @@ var todoDB = (function() {
 		}
 
 		var db = datastore;
+
+		if(db.objectStoreNames.contains(newProjName)) {
+			console.log(newProjName + " is already an existing project. Cannot use this name.");
+			return;
+		} else if(projName === newProjName) {
+			console.log("Both project names are the same: " + newProjName);
+			return;
+		}
+
 		if(db.objectStoreNames.contains(projName)) {
 			var request = indexedDB.open(dbName);
 

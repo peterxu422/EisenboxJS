@@ -228,9 +228,9 @@ var editProject = function() {
 		lbl.innerHTML = newProjName;
 		lbl.style.display = "inline";
 		this.style.display = "none";
-
-		console.log(oldProjName + ", " + newProjName);
-		todoDB.updateProjectName(oldProjName, newProjName, refreshProjects);
+		
+		if(oldProjName !== newProjName)
+			todoDB.updateProjectName(oldProjName, newProjName, refreshProjects);
 	});
 }
 
@@ -267,14 +267,6 @@ function init() {
 		if(newProjName === null)
 			return;
 		todoDB.createProject(newProjName, refreshProjects);
-	};
-
-	var updateBtn = document.getElementById("update-btn");
-	updateBtn.onclick = function() {
-		var proj1 = prompt("Enter proj1 name");
-		var proj2 = prompt("Enter proj2 name");
-
-		todoDB.updateProjectName(proj1, proj2, refreshProjects);
 	};
 
 /*	var projLists = document.getElementsByClassName("project");
