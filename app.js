@@ -395,7 +395,6 @@ function refreshTodos() {
 			var done_ts = todo.done_timestamp;
 			var done_date = new Date(done_ts);
 
-
 			if(done_ts > 0 && !isSameDay(today, done_date)) {
 				todoDB.deleteTodo(ts, function() {});
 				continue;
@@ -403,10 +402,11 @@ function refreshTodos() {
 			
 			var li = document.createElement('li');
 			li.id = "todo-" + ts;
-			li.className = "todo-li";
+			li.className = "collection-item todo-li";
 			li.draggable = "true";
 
 			var par = document.createElement("p");
+			var div = document.createElement("div");
 
 			var checkbox = document.createElement('input');
 			var checkbox_id = "cb-" + ts;
@@ -433,10 +433,26 @@ function refreshTodos() {
 			editInput.style.display = "none";
 			editInput.value = todo.text;
 
+			var aClr = document.createElement("a");
+			aClr.className = "secondary-content del-todo";
+			aClr.href = "#!";
+			aClr.setAttribute("data-id", ts);
+
+			var iClr = document.createElement("i");
+			iClr.className = "mdi-content-clear del-todo-icon";
+
+/*
 			li.appendChild(par);
 			par.appendChild(checkbox);
 			par.appendChild(label);
 			par.appendChild(editInput);
+*/			
+			aClr.appendChild(iClr);
+			div.appendChild(checkbox);
+			div.appendChild(label);
+			div.appendChild(editInput);
+			div.appendChild(aClr);
+			li.appendChild(div);
 
 			switch(todo.quadrant) {
 				/*
@@ -471,6 +487,21 @@ function refreshTodos() {
 						console.log("callback check todo");
 					});
 				}		
+			});
+
+			// Setup an event listener for each delete-todo button
+			aClr.addEventListener('click', function(e) {
+				var elt = e.target;
+				var eltTag = elt.tagName;
+				var id;
+
+				if(eltTag === "I")
+					id = parseInt(elt.parentNode.getAttribute("data-id"));
+				else if(eltTag === "A")
+					id = parseInt(elt.getAttribute("data-id"));
+
+				
+				todoDB.deleteTodo(id, refreshTodos);
 			});
 		}
 	});

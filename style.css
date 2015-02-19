@@ -249,6 +249,19 @@ body {
 	height: 48em;
 }
 
+.del-todo:hover .del-todo-icon {
+	opacity: 1.0;
+}
+
+.del-todo-icon {	
+  	opacity: 0.0;
+    -webkit-transition: all 500ms ease-in-out;
+    -moz-transition: all 500ms ease-in-out;
+    -ms-transition: all 500ms ease-in-out;
+    -o-transition: all 500ms ease-in-out;
+    transition: all 500ms ease-in-out;
+}
+
 /*
 #page-wrapper {
 	width: 100%;

@@ -370,7 +370,7 @@ var todoDB = (function() {
 			throw "datastore is null exception";
 			return;
 		}
-
+		
 		var db = datastore;
 		var transaction = db.transaction([curProject], 'readwrite');
 		var objStore = transaction.objectStore(curProject);
