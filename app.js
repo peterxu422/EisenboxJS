@@ -421,7 +421,7 @@ function refreshTodos() {
 			label.htmlFor = checkbox_id;
 			label.innerHTML = todo.text;
 			label.className = "todo-display";
-			label.style.display = "inline";
+			//label.style.display = "inline";
 			label.ondblclick = editTask;
 
 			if(done_ts > 0)

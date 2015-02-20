@@ -101,6 +101,7 @@ body, html {
 	padding: 0 0;
 	margin: auto;
 	width: 100%;
+	min-width: 750px;
 	height: 100%;
 }
 
@@ -190,22 +191,6 @@ body {
 	width: 50%;
 	padding: 0 10px 10px 0;
 }
-/*
-#Q1 {
-	width: 500px;
-}
-#Q2 {
-	width: 500px;
-}
-
-#Q3 {
-	width: 500px;
-}
-
-#Q4 {
-	width: 500px;
-}
-*/
 
 .quadrant {
 	/*border: 5px solid #FFFFFF;*/
@@ -225,6 +210,13 @@ body {
 	padding: 0.5em;
 }
 
+#new-todo-q1,
+#new-todo-q2,
+#new-todo-q3,
+#new-todo-q4 {
+	margin: 0 0;
+}
+
 .todo-items-list {
 	/*height: 20em;*/
 	height: 90%;
@@ -241,7 +233,7 @@ body {
 
 .todo-display {
 	color: #212121;
-	width: 50%;
+	width: 95%;
 	padding: auto;
 }
 
@@ -255,6 +247,7 @@ body {
 
 .del-todo-icon {	
   	opacity: 0.0;
+  	vertical-align: center;
     -webkit-transition: all 500ms ease-in-out;
     -moz-transition: all 500ms ease-in-out;
     -ms-transition: all 500ms ease-in-out;
@@ -319,4 +312,15 @@ input[type="checkbox"] {
 
 ::-webkit-scrollbar-thumb:hover {
 	background-color: #aaa;
+}
+
+/* Media Queries ---------------- */
+@media (max-width: 1000px) {
+	body {
+		background-color: darkred;
+	}
+
+	#ebox {
+		width: 750px;
+	}
 }
