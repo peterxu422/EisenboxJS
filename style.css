@@ -219,12 +219,19 @@ body {
 
 .todo-items-list {
 	/*height: 20em;*/
-	height: 90%;
+	height: 95%;
 	list-style: none;
 	padding: 0.5em 2em 0.5em 1.5em;
-	margin: 0;
+	/*margin: 0 0;*/
 	overflow: scroll;
 	overflow-x: hidden;
+}
+
+#todo-q1-items,
+#todo-q2-items,
+#todo-q3-items,
+#todo-q4-items {
+	margin: 0 0;
 }
 
 /*.todo-li {

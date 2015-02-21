@@ -180,69 +180,18 @@ window.onload = function() {
 */
 };
 
-var editTask = function() {
-	console.log("inside editTask");
-	var listItem = this.parentNode;
-	var labelItem = listItem.querySelector("label");
-	var editInput = listItem.querySelector("input[type=text]");
 
-	if(labelItem.style.textDecoration === "line-through") {
-		return;
-	}
-
-	labelItem.style.display = "none";
-	editInput.style.display = "";
-
-	editInput.addEventListener("focusout", function() {
-		console.log("editinput focusout callback");
-
-		var listItem = this.parentNode;
-		var labelItem = listItem.querySelector("label");
-		var checkbox = listItem.querySelector("input[type=checkbox]");
-
-		labelItem.innerHTML = this.value;
-		labelItem.style.display = "inline";
-		this.style.display = "none";
-
-		var id = parseInt(checkbox.getAttribute("data-id"));
-
-		todoDB.updateText(id, this.value, refreshTodos);
-	});
-}
-
-var editProject = function() {
-	console.log("inside editProject");
-	var a = this.parentNode;
-	var lbl = this;
-	var editInput = a.querySelector("input[type=text]");
-
-	lbl.style.display = "none";
-	editInput.style.display = "";
-
-	editInput.addEventListener("focusout", function() {
-		var a = this.parentNode;
-		var lbl = a.querySelector("label");
-		var oldProjName = lbl.value;
-		var newProjName = this.value;
-
-		lbl.innerHTML = newProjName;
-		lbl.style.display = "inline";
-		this.style.display = "none";
-		
-		if(oldProjName !== newProjName)
-			todoDB.updateProjectName(oldProjName, newProjName, refreshProjects);
-	});
-}
 
 function init() {
-	/*
+	
 	$("#todo-items").sortable();
 	$("#todo-q1-items").sortable();
 	$("#todo-q2-items").sortable();
 	$("#todo-q3-items").sortable();
 	$("#todo-q4-items").sortable();
-	$("#test-list").sortable();
-	*/
+	$(".sortable").sortable();
+
+	
 
 	var projTitle = document.getElementById("project-title");
 	projTitle.innerHTML = todoDB.getCurrentProject();
@@ -260,14 +209,9 @@ function init() {
 	}
 	*/
 
+	// Bind Handler to Add Project Button
 	var projAddBtn = document.getElementById("proj-add-btn");
-	projAddBtn.onclick = function() {
-		var newProjName = prompt("Enter a project Name");
-
-		if(newProjName === null)
-			return;
-		todoDB.createProject(newProjName, refreshProjects);
-	};
+	projAddBtn.onclick = addProject;
 
 /*	var projLists = document.getElementsByClassName("project");
 	for(var i=0; i < projLists.length; i++) {
@@ -279,6 +223,67 @@ function init() {
 function printDB() {
 	todoDB.fetchTodos(function(todos) {
 		console.log(todos.toString());
+	});
+}
+
+function addProject() {
+	var sideNav = document.getElementById("slide-out");
+	var li = document.createElement("li");
+
+	var divRow = document.createElement("div");
+	divRow.className = "row";
+
+	var a = document.createElement("a");
+	a.className = "project";
+	//a.value = projName;
+	a.setAttribute("href", "#!");
+	
+	var divCol10 = document.createElement("div");
+	divCol10.className = "col s10";
+
+	var label = document.createElement("label");
+	label.className = "proj-side-lbl";
+	label.style.display = "none";
+	label.ondblclick = editProject;
+
+	var editInput = document.createElement("input");
+	editInput.type = "text";
+	editInput.className = "proj-edit";
+	//editInput.value = projName;
+	// editInput.style.display = "none";
+	divCol10.appendChild(label);
+	divCol10.appendChild(editInput);
+
+	var divCol2 = document.createElement("div");
+	divCol2.className = "col s2 del-container";
+	var iTag = document.createElement("i");
+	iTag.className = "mdi-action-delete right del-proj";
+	//iTag.value = projName;
+	divCol2.appendChild(iTag);
+
+	a.appendChild(divCol10);
+	a.appendChild(divCol2);
+	divRow.appendChild(a);
+	li.appendChild(divRow);
+	sideNav.appendChild(li);
+
+	editInput.focus();
+	
+	// Handler to add the new project to the database when focused out
+	editInput.addEventListener("focusout", function() {
+		var projName = this.value;
+
+		if(projName === "" || projName === null) {
+			refreshProjects();
+			return;
+		}
+		else
+			todoDB.createProject(projName, refreshProjects);
+	});
+
+	// 
+	iTag.addEventListener('click', function() {
+		refreshProjects();
 	});
 }
 
@@ -358,7 +363,7 @@ function refreshProjects() {
 				var projName = projDelBtn.value;
 				todoDB.deleteProject(projName, refreshProjects);
 				console.log("del-proj-btn clicked: " + projName);
-			})
+			});
 
 			a.appendChild(divCol10);
 			a.appendChild(divCol2);
@@ -471,6 +476,14 @@ function refreshTodos() {
 
 			// Setup an event listener for each checkbox.
 			checkbox.addEventListener('click', function(e) {
+				var elt = e.target;
+
+				if(elt.tagName === "LABEL") {
+					console.log("clicked on the label not the checkbox.");
+					return;
+				}
+
+
 				var id = parseInt(e.target.getAttribute('data-id'));
 				var parItem = this.parentNode;
 				var labelItem = parItem.querySelector("label");
@@ -504,6 +517,60 @@ function refreshTodos() {
 				todoDB.deleteTodo(id, refreshTodos);
 			});
 		}
+	});
+}
+
+var editTask = function() {
+	console.log("inside editTask");
+	var listItem = this.parentNode;
+	var labelItem = listItem.querySelector("label");
+	var editInput = listItem.querySelector("input[type=text]");
+
+	if(labelItem.style.textDecoration === "line-through") {
+		return;
+	}
+
+	labelItem.style.display = "none";
+	editInput.style.display = "";
+
+	editInput.addEventListener("focusout", function() {
+		console.log("editinput focusout callback");
+
+		var listItem = this.parentNode;
+		var labelItem = listItem.querySelector("label");
+		var checkbox = listItem.querySelector("input[type=checkbox]");
+
+		labelItem.innerHTML = this.value;
+		labelItem.style.display = "inline";
+		this.style.display = "none";
+
+		var id = parseInt(checkbox.getAttribute("data-id"));
+
+		todoDB.updateText(id, this.value, refreshTodos);
+	});
+}
+
+var editProject = function() {
+	console.log("inside editProject");
+	var a = this.parentNode;
+	var lbl = this;
+	var editInput = a.querySelector("input[type=text]");
+
+	lbl.style.display = "none";
+	editInput.style.display = "";
+
+	editInput.addEventListener("focusout", function() {
+		var a = this.parentNode;
+		var lbl = a.querySelector("label");
+		var oldProjName = lbl.value;
+		var newProjName = this.value;
+
+		lbl.innerHTML = newProjName;
+		lbl.style.display = "inline";
+		this.style.display = "none";
+		
+		if(oldProjName !== newProjName)
+			todoDB.updateProjectName(oldProjName, newProjName, refreshProjects);
 	});
 }
 
