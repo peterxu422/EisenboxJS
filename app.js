@@ -178,19 +178,26 @@ window.onload = function() {
 		debugger
 	});
 */
+
 };
 
 
 
 function init() {
-	
+	/*	
 	$("#todo-items").sortable();
 	$("#todo-q1-items").sortable();
 	$("#todo-q2-items").sortable();
 	$("#todo-q3-items").sortable();
 	$("#todo-q4-items").sortable();
-	$(".sortable").sortable();
+	*/
+	//$(".todo-items-list").sortable();
+	//$("#test-list").sortable();
 
+	//$(".sortable").sortable();
+	$('.todo-items-list').sortable({
+		connectWith: '.connected'
+	});
 	
 
 	var projTitle = document.getElementById("project-title");
@@ -235,7 +242,6 @@ function addProject() {
 
 	var a = document.createElement("a");
 	a.className = "project";
-	//a.value = projName;
 	a.setAttribute("href", "#!");
 	
 	var divCol10 = document.createElement("div");
@@ -249,8 +255,6 @@ function addProject() {
 	var editInput = document.createElement("input");
 	editInput.type = "text";
 	editInput.className = "proj-edit";
-	//editInput.value = projName;
-	// editInput.style.display = "none";
 	divCol10.appendChild(label);
 	divCol10.appendChild(editInput);
 
@@ -258,7 +262,6 @@ function addProject() {
 	divCol2.className = "col s2 del-container";
 	var iTag = document.createElement("i");
 	iTag.className = "mdi-action-delete right del-proj";
-	//iTag.value = projName;
 	divCol2.appendChild(iTag);
 
 	a.appendChild(divCol10);
@@ -426,7 +429,6 @@ function refreshTodos() {
 			label.htmlFor = checkbox_id;
 			label.innerHTML = todo.text;
 			label.className = "todo-display";
-			//label.style.display = "inline";
 			label.ondblclick = editTask;
 
 			if(done_ts > 0)
@@ -445,13 +447,7 @@ function refreshTodos() {
 
 			var iClr = document.createElement("i");
 			iClr.className = "mdi-content-clear del-todo-icon";
-
-/*
-			li.appendChild(par);
-			par.appendChild(checkbox);
-			par.appendChild(label);
-			par.appendChild(editInput);
-*/			
+		
 			aClr.appendChild(iClr);
 			div.appendChild(checkbox);
 			div.appendChild(label);
@@ -517,6 +513,12 @@ function refreshTodos() {
 				todoDB.deleteTodo(id, refreshTodos);
 			});
 		}
+
+		// Must make lists sortable here because fetchTodos is asynch. Outside of fetchTodos() this will be executed before todos are loaded
+		$(".todo-items-list").sortable();
+		$('.connected').sortable({
+			connectWith: '.connected'
+		});
 	});
 }
 

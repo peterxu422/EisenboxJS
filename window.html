@@ -9,11 +9,14 @@
 		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 
+
 		<link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css"  media="screen,projection"/>
 		
 		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
       	<script type="text/javascript" src="materialize/js/materialize.min.js"></script>
-
+      	
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script src="bower_components/html.sortable/src/html.sortable.js"></script>
 		<script src="db.js"></script>
 		<script src="app.js"></script>
 	</head>
@@ -133,7 +136,7 @@
 									</div>
 								</form>
 								<ul id="todo-q4-items" class="collection todo-items-list">
-<!-- 
+
 									<li id="todo-1424228999185" class="collection-item todo-li" draggable="true">
 										<div>
 											<input id="cb-1424228999185" type="checkbox" class="todo-checkbox" data-id="1424228999185">
@@ -154,7 +157,7 @@
 											</a>
 										</div>
 									</li>
-									 -->
+									
 								</ul>
 							</div>
 						</div>
@@ -163,12 +166,59 @@
 			</table>
 		</div>
 
-<ul class="sortable">
-    <li>Item 1</li>
-    <li>Item 2</li>
-    <li>Item 3</li>
-    <li>Item 4</li>
-</ul>
+	<ul id="test-list" class="collection connected">
+	    <li class="collection-item">Item 1</li>
+	    <li class="collection-item">Item 2</li>
+	    <li class="collection-item">Item 3</li>
+	    <li class="collection-item">Item 4</li>
+		<li id="todo-1424228999185" class="collection-item todo-li" draggable="true">
+			<div>
+				<input id="cb-1424228999185" type="checkbox" class="todo-checkbox" data-id="1424228999185">
+				<label for="cb-1424228999185" class="todo-display" style="display: inline;">Long todo items leak to the edge too much. Fix margins/padding issues on todo-items</label>
+				<input type="text" class="todo-edit" style="display: none;">
+				<a href="#!" class="secondary-content">
+					<i class="mdi-content-clear del-todo-icon"></i>
+				</a>
+			</div>
+		</li>
+		<li id="todo-1424228999186" class="collection-item todo-li" draggable="true">
+			<div>
+				<input id="cb-1424228999186" type="checkbox" class="todo-checkbox" data-id="1424228999186">
+				<label for="cb-1424228999186" class="todo-display" style="display: inline;">Long todo items leak to the edge too much. Fix margins</label>
+				<input type="text" class="todo-edit" style="display: none;">
+				<a href="#!" class="secondary-content">	
+					<i class="mdi-content-clear"></i>	
+				</a>
+			</div>
+		</li>
+	</ul>
+
+	<ul id="test-list2" class="collection connected">
+	    <li class="collection-item">Item 6</li>
+	    <li class="collection-item">Item 7</li>
+	    <li class="collection-item">Item 8</li>
+	    <li class="collection-item">Item 9</li>
+		<li id="todo-1424228999185" class="collection-item todo-li" draggable="true">
+			<div>
+				<input id="cb-1424228999185" type="checkbox" class="todo-checkbox" data-id="1424228999185">
+				<label for="cb-1424228999185" class="todo-display" style="display: inline;">Lmao holy shit</label>
+				<input type="text" class="todo-edit" style="display: none;">
+				<a href="#!" class="secondary-content">
+					<i class="mdi-content-clear del-todo-icon"></i>
+				</a>
+			</div>
+		</li>
+		<li id="todo-1424228999186" class="collection-item todo-li" draggable="true">
+			<div>
+				<input id="cb-1424228999186" type="checkbox" class="todo-checkbox" data-id="1424228999186">
+				<label for="cb-1424228999186" class="todo-display" style="display: inline;">omg this is funy</label>
+				<input type="text" class="todo-edit" style="display: none;">
+				<a href="#!" class="secondary-content">	
+					<i class="mdi-content-clear"></i>	
+				</a>
+			</div>
+		</li>
+	</ul>
 
 <!-- 
       <ul class="collection with-header" style="width: 30%;">
@@ -270,21 +320,8 @@
   	</li>
   </ul>
 </div>
-  	<script>
-  		var inp = document.getElementById("task3");
 
-  		inp.addEventListener("change", function() {
-  			console.log("task3 checked");
-  			var par = this.parentNode;
-  			var lbl = par.querySelector("label");
-  			
-  			if(lbl.style.textDecoration === "line-through")
-  				lbl.style.textDecoration = "";
-  			else
-  				lbl.style.textDecoration = "line-through";
-  		});
-  	</script>
-
-  	-->
+-->
+  
 	</body>
 </html>

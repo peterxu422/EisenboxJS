@@ -234,6 +234,11 @@ body {
 	margin: 0 0;
 }
 
+		li.sortable-placeholder {
+			border: 1px dashed #CCC;
+			background: none;
+		}
+
 /*.todo-li {
 	border-bottom: 1px solid #e0e0e0;
 }*/
