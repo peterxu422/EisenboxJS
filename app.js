@@ -23,9 +23,10 @@ window.onload = function() {
 	var newTodoInputQ4 = document.getElementById('new-todo-q4');
 
 	init();
-	/*
-	$("#todo-q1-items").droppable({
+	
+/*	$("#todo-q1-items").droppable({
 		drop: function(e, ui) {
+			debugger
 			var item = ui.draggable[0];
 			var timestamp = parseInt(item.id.substring(5), 10); // 'todo-[timestamp]'
 			todoDB.changeQuad(timestamp, 1, refreshTodos);
@@ -157,46 +158,20 @@ window.onload = function() {
 		// Don't send the form. QUES: Why??
 		return false;
 	}
-/*
-	$(".edit-btn").click(function() {
-		console.log("edit-btn clicked!");
-		debugger
-	});
-
-	$(".todo-display").click(function() {
-		console.log("todo-display clicked!");
-		debugger
-		$(this).hide().siblings(".todo-edit").show().val($(this).text()).focus();
-	});
-
-	$(".todo-edit").focusout(function() {
-		$(this).hide().siblings(".todo-display").show().text($(this).val());
-	});
-
-	$(".todo-li").click(function() {
-		console.log("todo-li clicked!");
-		debugger
-	});
-*/
 
 };
 
 
 
 function init() {
-	/*	
-	$("#todo-items").sortable();
-	$("#todo-q1-items").sortable();
-	$("#todo-q2-items").sortable();
-	$("#todo-q3-items").sortable();
-	$("#todo-q4-items").sortable();
-	*/
-	//$(".todo-items-list").sortable();
-	//$("#test-list").sortable();
+
 
 	//$(".sortable").sortable();
 	$('.todo-items-list').sortable({
 		connectWith: '.connected'
+	}).bind('sortupdate', function(e, ui) {
+		// BUG: This gets executed twice for some reason.
+		updateTodoQuad(e, ui);
 	});
 	
 
@@ -225,6 +200,34 @@ function init() {
 		var lbl = projLists[i].querySelector("label");
 		lbl.ondblclick = editProject;
 	}*/
+}
+
+function updateTodoQuad(e, ui) {
+	var item = ui.item[0];
+	var timestamp = parseInt(item.id.substring(5), 10); // 'todo-[timestamp]'
+	var oldQuad = ui.startparent[0].id;
+	var newQuad = ui.endparent[0].id;
+	var quad;
+	debugger
+
+	if(oldQuad !== newQuad) {
+		switch(newQuad) {
+			case "todo-q1-items": 
+				quad = 1;
+				break;
+			case "todo-q2-items":
+				quad = 2;
+				break;
+			case "todo-q3-items":
+				quad = 3;
+				break;
+			case "todo-q4-items":
+				quad = 4;
+				break;
+		}
+		todoDB.changeQuad(timestamp, quad, refreshTodos);
+		console.log('updating ' + oldQuad + ", " + newQuad + ", " + quad );
+	}
 }
 
 function printDB() {

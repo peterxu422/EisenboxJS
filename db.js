@@ -48,7 +48,7 @@ var todoDB = (function() {
 		*/
 		var request = indexedDB.open(dbName);
 		curProject = projectName;
-
+		debugger
 		// Handle datastore upgrades.
 		/*
 			onupgradeneeded event is triggered if the database doesn't already exist or updating the version.
@@ -80,7 +80,7 @@ var todoDB = (function() {
 			// Get a reference to the DB.
 			datastore = e.target.result;
 			
-			// Execute the callback. In this case, refreshTodos()
+			// Execute refreshTodos(), refreshProjects() callback
 			callback();
 			callback2();
 		};
@@ -92,7 +92,6 @@ var todoDB = (function() {
 
 	/*
 		Create a new object store for a new Project
-		************TODO: RefreshProjects Callback isn't working properly
 	*/
 	tDB.createProject = function(projectName, callback) {
 		if(datastore === null) {
